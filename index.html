@@ -4,15 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <title>Ping Pong</title>
+  <title>Ping Pong v1.0.0</title>
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.json">
 
-  <!-- iOS support -->
+  <!-- iOS App Mode -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="PingPong">
+
   <link rel="apple-touch-icon" href="./icon-192.png">
 
   <!-- Theme -->
@@ -22,48 +23,69 @@
 </head>
 
 <body>
-  <!-- Game canvas -->
+
+  <!-- GAME CANVAS -->
   <canvas id="game"></canvas>
 
-  <!-- Simple overlay UI -->
+  <!-- VERSION TAG -->
+  <div id="version">v1.0.0</div>
+
+  <!-- SIMPLE UI -->
   <div id="ui">
-    <div id="title">PING PONG</div>
-    <div id="hint">Move mouse or finger to control right paddle</div>
+    <div class="title">PING PONG</div>
+    <div class="hint">Move mouse / finger to control right paddle</div>
   </div>
 
   <script src="./app.js"></script>
 
-  <!-- Service Worker (offline support) -->
+  <!-- SERVICE WORKER -->
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("./sw.js")
-        .then(() => console.log("SW registered"))
-        .catch(err => console.log("SW failed", err));
+        .then(() => console.log("SW: v1.0.0 registered"))
+        .catch(err => console.log("SW error", err));
     }
   </script>
 
+  <!-- UI STYLE -->
   <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      font-family: Arial, sans-serif;
+    }
+
+    #version {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(255,255,255,0.4);
+      font-size: 12px;
+      user-select: none;
+    }
+
     #ui {
       position: absolute;
-      top: 20px;
+      top: 15px;
       width: 100%;
       text-align: center;
       color: white;
-      font-family: Arial, sans-serif;
       pointer-events: none;
     }
 
-    #title {
-      font-size: 22px;
-      font-weight: bold;
+    .title {
+      font-size: 20px;
       letter-spacing: 3px;
+      font-weight: bold;
     }
 
-    #hint {
+    .hint {
       font-size: 12px;
-      opacity: 0.7;
-      margin-top: 5px;
+      opacity: 0.6;
+      margin-top: 4px;
     }
   </style>
+
 </body>
 </html>
