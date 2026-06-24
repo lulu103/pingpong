@@ -1,64 +1,124 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// resize
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
 
-// paddle
-const paddleHeight = 120;
-const paddleWidth = 10;
+// paddle settings
+const paddleWidth = 12;
+const paddleHeight = 160;
 
+// left AI paddle
 let leftY = canvas.height / 2;
+
+// right player paddle
 let rightY = canvas.height / 2;
 
 // ball
-let x = canvas.width / 2;
-let y = canvas.height / 2;
-let vx = 6;
-let vy = 4;
-let radius = 10;
+let ballX = canvas.width / 2;
+let ballY = canvas.height / 2;
+let ballVX = 6;
+let ballVY = 4;
+const ballR = 10;
 
+// 🎯 AI settings
+const aiSpeed = 0.08; // 越大越強 (0.05 easy, 0.12 hard)
+
+// draw loop
 function draw() {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // paddles
+  // ======================
+  // AI (LEFT PADDLE)
+  // ======================
+  leftY += (ballY - leftY - paddleHeight / 2) * aiSpeed;
+
+  // ======================
+  // PLAYER (RIGHT PADDLE)
+  // ======================
+  // mouse/touch already controls rightY
+
+  // ======================
+  // DRAW PADDLES
+  // ======================
   ctx.fillStyle = "white";
+
+  // left AI
   ctx.fillRect(20, leftY, paddleWidth, paddleHeight);
+
+  // right player
   ctx.fillRect(canvas.width - 30, rightY, paddleWidth, paddleHeight);
 
-  // ball
+  // ======================
+  // BALL
+  // ======================
   ctx.beginPath();
-  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.arc(ballX, ballY, ballR, 0, Math.PI * 2);
   ctx.fill();
 
   // move ball
-  x += vx;
-  y += vy;
+  ballX += ballVX;
+  ballY += ballVY;
 
-  // bounce top/bottom
-  if (y < 0 || y > canvas.height) vy *= -1;
+  // top / bottom bounce
+  if (ballY < 0 || ballY > canvas.height) {
+    ballVY *= -1;
+  }
 
-  // paddle collision
-  if (x < 30 && y > leftY && y < leftY + paddleHeight) vx *= -1;
-  if (x > canvas.width - 30 && y > rightY && y < rightY + paddleHeight) vx *= -1;
+  // ======================
+  // COLLISION (LEFT)
+  // ======================
+  if (
+    ballX < 30 &&
+    ballY > leftY &&
+    ballY < leftY + paddleHeight
+  ) {
+    ballVX *= -1;
 
-  // reset
-  if (x < 0 || x > canvas.width) {
-    x = canvas.width / 2;
-    y = canvas.height / 2;
+    // add angle control
+    ballVY = (ballY - (leftY + paddleHeight / 2)) * 0.2;
+  }
+
+  // ======================
+  // COLLISION (RIGHT)
+  // ======================
+  if (
+    ballX > canvas.width - 30 &&
+    ballY > rightY &&
+    ballY < rightY + paddleHeight
+  ) {
+    ballVX *= -1;
+
+    // add angle control
+    ballVY = (ballY - (rightY + paddleHeight / 2)) * 0.2;
+  }
+
+  // ======================
+  // RESET BALL
+  // ======================
+  if (ballX < 0 || ballX > canvas.width) {
+    ballX = canvas.width / 2;
+    ballY = canvas.height / 2;
+    ballVX *= -1;
   }
 
   requestAnimationFrame(draw);
 }
-
 draw();
 
-// controls
-document.addEventListener("mousemove", e => {
+// ======================
+// CONTROLS (RIGHT PADDLE)
+// ======================
+document.addEventListener("mousemove", (e) => {
   rightY = e.clientY - paddleHeight / 2;
 });
 
-document.addEventListener("touchmove", e => {
+document.addEventListener("touchmove", (e) => {
   rightY = e.touches[0].clientY - paddleHeight / 2;
 });
